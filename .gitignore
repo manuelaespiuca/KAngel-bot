@@ -1,0 +1,6 @@
+.env
+__pycache__/
+idiomas.json
+modos.json
+lembretes.json
+tarefas.json
