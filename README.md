@@ -288,7 +288,7 @@ O `main.py` carrega sozinho todo arquivo `.py` da pasta `cogs/` (menos os que co
 
 ## Licença
 
-Distribuído sob a licença [MIT](LICENSE). Você pode usar, copiar, modificar e distribuir este projeto, desde que mantenha o aviso de copyright e a licença.
+O código deste projeto é distribuído sob a licença [MIT](LICENSE): você pode usar, copiar, modificar e distribuir, desde que mantenha o aviso de copyright e a licença.
 
 Copyright (c) 2026 Manuela Espiúca.
 
