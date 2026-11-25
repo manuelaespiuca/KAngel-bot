@@ -141,6 +141,107 @@ Os comandos funcionam dos dois jeitos: digitando o prefixo direto ou usando `/` 
 - O `.painel` funciona só com o prefixo
 - Os comandos só funcionam dentro de servidores, não em DM
 
+## Como usar
+
+Este projeto não é um bot hospedado: cada pessoa roda a própria cópia, com o próprio bot do Discord e a própria chave do Gemini. Assim, ninguém usa a chave de outra pessoa. O bot só fica online enquanto o programa estiver rodando.
+
+### Requisitos
+
+- [Python](https://www.python.org/downloads/) 3.10 ou mais novo
+- [FFmpeg](https://ffmpeg.org/download.html) instalado e no PATH (necessário para a música)
+  - Windows: `winget install ffmpeg`
+  - macOS: `brew install ffmpeg`
+  - Linux (Debian/Ubuntu): `sudo apt install ffmpeg`
+- Uma conta no Discord e uma conta Google (para a chave do Gemini)
+
+### 1. Baixe o projeto
+
+```bash
+git clone https://github.com/manuelaespiuca/KAngel-bot.git
+cd KAngel-bot
+```
+
+### 2. Instale as dependências
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Crie o seu bot no Discord
+
+1. Acesse o [Discord Developer Portal](https://discord.com/developers/applications) e clique em **New Application**.
+2. Abra a aba **Bot** e copie o **token** (clique em *Reset Token* se precisar gerar um).
+3. Ainda na aba **Bot**, ative as duas *Privileged Gateway Intents*:
+   - **Server Members Intent** (boas-vindas e saída)
+   - **Message Content Intent** (conversa com IA e comandos com prefixo)
+
+### 4. Gere a sua chave do Gemini
+
+Crie uma chave gratuita no [Google AI Studio](https://aistudio.google.com/apikey).
+
+### 5. Configure o `.env`
+
+Copie o arquivo de exemplo (ele precisa ficar na mesma pasta do `main.py`):
+
+```bash
+# Windows (PowerShell)
+Copy-Item .env.example .env
+
+# macOS / Linux
+cp .env.example .env
+```
+
+Abra o `.env` e preencha, no mínimo:
+
+```
+DISCORD_TOKEN=seu_token_aqui
+GEMINI_API_KEY=sua_chave_aqui
+```
+
+#### Variáveis opcionais
+
+| Variável | Para que serve |
+|---|---|
+| `MODELO_GEMINI` | modelo do Gemini usado pela IA (padrão: `gemini-3.6-flash`) |
+| `PREFIXO` | prefixo dos comandos de texto (padrão: `.`) |
+| `CANAL_MUSICA_ID` | canal onde o `.tocar` funciona (`0` = qualquer canal) |
+| `CANAL_ESTUDOS_ID` | canal dos comandos do tutor (`0` = qualquer canal) |
+| `CANAL_BOAS_VINDAS_ID` | canal das mensagens de boas-vindas (`0` = desativado) |
+| `CANAL_SAIDA_ID` | canal das mensagens de saída (`0` = desativado) |
+| `CARGO_MEMBRO_ID` | cargo dado automaticamente a quem entra (`0` = desativado) |
+| `GIF_BOAS_VINDAS_URL` | link de um gif para a mensagem de boas-vindas |
+
+**Como pegar um ID:** no Discord, ative o *Modo desenvolvedor* em Configurações → Avançado. Depois clique com o botão direito no canal ou cargo e escolha **Copiar ID**.
+
+### 6. Convide o bot para o seu servidor
+
+No Developer Portal, vá em **OAuth2 → URL Generator**:
+
+1. Em *Scopes*, marque `bot` e `applications.commands`.
+2. Em *Bot Permissions*, marque: **Send Messages**, **Embed Links**, **Read Message History**, **Manage Messages** (para fixar o painel), **Kick Members**, **Ban Members**, **Manage Roles**, **Connect** e **Speak**.
+3. Copie o link gerado, abra no navegador e escolha o seu servidor.
+
+Depois de convidar, coloque o cargo do bot **acima** do cargo de membro (Configurações do servidor → Cargos), senão ele não consegue dar o cargo nem moderar.
+
+### 7. Rode o bot
+
+```bash
+python main.py
+```
+
+Se tudo estiver certo, aparece `bot online como ... | N cogs carregados` no terminal. Os comandos com `/` podem levar alguns minutos para aparecer no Discord.
+
+Os arquivos `idiomas.json`, `modos.json`, `lembretes.json` e `tarefas.json` são criados sozinhos conforme você usa o bot.
+
+### Problemas comuns
+
+- **"a variável ... não está definida"**: o `.env` não existe ou está incompleto. Confira o passo 5.
+- **"token do Discord inválido"**: copie o token de novo no Developer Portal.
+- **Erro de intents**: ative as duas *Privileged Gateway Intents* (passo 3).
+- **A música não toca**: confira se o FFmpeg está instalado (`ffmpeg -version` no terminal) e se você está num canal de voz.
+- **A IA não responde**: confira a chave do Gemini e se o modelo em `MODELO_GEMINI` está disponível para a sua conta.
+- **O bot não dá cargo nem expulsa ninguém**: o cargo do bot precisa estar acima dos outros e ter as permissões necessárias.
+
 ## Estrutura do projeto
 
 ```
@@ -152,7 +253,10 @@ Os comandos funcionam dos dois jeitos: digitando o prefixo direto ou usando `/` 
 ├── idioma_storage.py            # guarda o idioma escolhido por cada servidor
 ├── modo_storage.py              # guarda o modo (Ame/KAngel) escolhido por cada servidor
 ├── requirements.txt
-├── .env                         # token do Discord e chave do Gemini
+├── LICENSE                      # licença MIT
+├── .gitignore                   # arquivos que o Git ignora (.env e dados do bot)
+├── .env.example                 # modelo do .env (copie para .env e preencha)
+├── .env                         # criado por você
 ├── idiomas.json                 # gerado automaticamente
 ├── modos.json                   # gerado automaticamente
 ├── lembretes.json               # gerado automaticamente
@@ -184,19 +288,9 @@ O `main.py` carrega sozinho todo arquivo `.py` da pasta `cogs/` (menos os que co
 
 ## Licença
 
-Copyright (c) 2026 KAngel Bot. Todos os direitos reservados.
+Distribuído sob a licença [MIT](LICENSE). Você pode usar, copiar, modificar e distribuir este projeto, desde que mantenha o aviso de copyright e a licença.
 
-Este software e todo o seu código-fonte, estrutura, lógica e documentação são protegidos por direitos autorais.
-
-É estritamente PROIBIDO, sem autorização prévia e expressa por escrito do titular dos direitos:
-
-- Copiar, reproduzir ou duplicar qualquer parte deste projeto;
-- Modificar, adaptar ou criar obras derivadas;
-- Distribuir, publicar, sublicenciar ou vender cópias;
-- Utilizar o código, no todo ou em parte, em projetos próprios ou de terceiros;
-- Realizar engenharia reversa ou descompilar o software.
-
-O acesso a este repositório é fornecido exclusivamente para fins de visualização. Qualquer outro uso depende de autorização prévia do titular dos direitos.
+Copyright (c) 2026 Manuela Espiúca.
 
 ---
 

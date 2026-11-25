@@ -1,6 +1,7 @@
 import logging
 import os
 import pathlib
+import sys
 
 # Faz o bot sempre rodar a partir da pasta onde está este main.py,
 # não importa de onde o VS Code (ou o terminal) mandou rodar.
@@ -12,7 +13,15 @@ from discord.ext import commands
 from google import genai
 from google.genai import types
 
-import config
+try:
+    import config
+except RuntimeError as erro:
+    print("\n[erro] configuração incompleta")
+    print(f"       {erro}")
+    if not (PASTA / ".env").exists():
+        print("       dica: copie o .env.example para .env (na mesma pasta do main.py).")
+    sys.exit(1)
+
 import modo_storage
 from textos import TEXTOS
 
@@ -79,4 +88,12 @@ async def on_command_error(ctx: commands.Context, erro):
     print(f"erro no comando {ctx.command}: {erro}")
 
 
-bot.run(config.DISCORD_TOKEN, log_level=logging.WARNING)
+try:
+    bot.run(config.DISCORD_TOKEN, log_level=logging.WARNING)
+except discord.LoginFailure:
+    print("[erro] token do Discord inválido. confira o DISCORD_TOKEN no .env.")
+except discord.PrivilegedIntentsRequired:
+    print(
+        "[erro] ative as intents 'Message Content Intent' e 'Server Members Intent' "
+        "no Discord Developer Portal (aba Bot) e rode de novo."
+    )

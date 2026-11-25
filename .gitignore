@@ -1,6 +1,17 @@
+# Chaves e configuração pessoal
 .env
-__pycache__/
+
+# Dados do bot (cada pessoa gera os seus)
 idiomas.json
 modos.json
 lembretes.json
 tarefas.json
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Editor
+.vscode/
