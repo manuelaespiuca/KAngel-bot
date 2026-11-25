@@ -288,7 +288,7 @@ The files `idiomas.json`, `modos.json`, `lembretes.json` and `tarefas.json` are 
 
 ## License
 
-Distributed under the [MIT](LICENSE) license. You can use, copy, modify and distribute this project, as long as you keep the copyright notice and the license.
+The code in this project is distributed under the MIT license: you may use, copy, modify and distribute it, as long as you keep the copyright notice and the license.
 
 Copyright (c) 2026 Manuela Espiúca.
 
